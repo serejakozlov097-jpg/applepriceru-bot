@@ -24,13 +24,6 @@ dp = Dispatcher()
 
 logging.basicConfig(level=logging.INFO)
 
-# Кнопка "Старт" для запуска выбора устройств
-@dp.message(Command("start"))
-async def start(message: Message):
-    kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Старт", callback_data="start_bot")]
-    ])
-
 # Главное меню выбора устройств
 def get_main_menu():
     return InlineKeyboardMarkup(inline_keyboard=[
