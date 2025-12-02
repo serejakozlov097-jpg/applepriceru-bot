@@ -2,6 +2,7 @@ from aiohttp import web
 import asyncio
 import logging
 import os
+import random
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
@@ -26,47 +27,69 @@ logging.basicConfig(level=logging.INFO)
 
 # Модели iPhone и их реферальные ссылки
 IPHONE_MODELS = {
-    "iphone15": {
-        "name": "iPhone 15",
+    "iphone16": {
+        "name": "iPhone 16",
         "memory_options": {
-            "128GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15_128gb",
-                "Ozon": "https://ozon.ru/iphone15_128gb"
-            },
-            "256GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15_256gb",
-                "Ozon": "https://ozon.ru/iphone15_256gb"
-            }
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_128gb", "Ozon": "https://ozon.ru/iphone16_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_256gb", "Ozon": "https://ozon.ru/iphone16_256gb"},
         },
         "colors": ["Черный", "Белый", "Синий"]
     },
-    "iphone15pro": {
-        "name": "iPhone 15 Pro",
+    "iphone16plus": {
+        "name": "iPhone 16 Plus",
         "memory_options": {
-            "128GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15pro_128gb",
-                "Ozon": "https://ozon.ru/iphone15pro_128gb"
-            },
-            "256GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15pro_256gb",
-                "Ozon": "https://ozon.ru/iphone15pro_256gb"
-            }
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_128gb", "Ozon": "https://ozon.ru/iphone16plus_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_256gb", "Ozon": "https://ozon.ru/iphone16plus_256gb"},
+        },
+        "colors": ["Черный", "Белый", "Красный"]
+    },
+    "iphone16pro": {
+        "name": "iPhone 16 Pro",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_128gb", "Ozon": "https://ozon.ru/iphone16pro_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_256gb", "Ozon": "https://ozon.ru/iphone16pro_256gb"},
         },
         "colors": ["Черный", "Белый", "Золотой"]
     },
-    "iphone15promax": {
-        "name": "iPhone 15 Pro Max",
+    "iphone16promax": {
+        "name": "iPhone 16 Pro Max",
         "memory_options": {
-            "256GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15promax_256gb",
-                "Ozon": "https://ozon.ru/iphone15promax_256gb"
-            },
-            "512GB": {
-                "ЯндексМаркет": "https://yandex.ru/market/iphone15promax_512gb",
-                "Ozon": "https://ozon.ru/iphone15promax_512gb"
-            }
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_256gb", "Ozon": "https://ozon.ru/iphone16promax_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_512gb", "Ozon": "https://ozon.ru/iphone16promax_512gb"},
         },
         "colors": ["Серый", "Белый", "Синий"]
+    },
+    "iphone17": {
+        "name": "iPhone 17",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_128gb", "Ozon": "https://ozon.ru/iphone17_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_256gb", "Ozon": "https://ozon.ru/iphone17_256gb"},
+        },
+        "colors": ["Черный", "Белый", "Красный"]
+    },
+    "iphone17air": {
+        "name": "iPhone 17 Air",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_128gb", "Ozon": "https://ozon.ru/iphone17air_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_256gb", "Ozon": "https://ozon.ru/iphone17air_256gb"},
+        },
+        "colors": ["Серый", "Белый", "Синий"]
+    },
+    "iphone17pro": {
+        "name": "iPhone 17 Pro",
+        "memory_options": {
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_256gb", "Ozon": "https://ozon.ru/iphone17pro_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_512gb", "Ozon": "https://ozon.ru/iphone17pro_512gb"},
+        },
+        "colors": ["Черный", "Белый", "Золотой"]
+    },
+    "iphone17promax": {
+        "name": "iPhone 17 Pro Max",
+        "memory_options": {
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_512gb", "Ozon": "https://ozon.ru/iphone17promax_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_1tb", "Ozon": "https://ozon.ru/iphone17promax_1tb"},
+        },
+        "colors": ["Серый", "Белый", "Золотой"]
     }
 }
 
@@ -111,7 +134,7 @@ async def back_to_models(callback: CallbackQuery):
         reply_markup=get_iphone_menu()
     )
 
-# Выбор памяти и показ ссылок
+# Выбор памяти и показ ссылок с рандомным цветом
 @dp.callback_query(F.data.startswith("memory_"))
 async def select_memory(callback: CallbackQuery):
     _, model_code, mem = callback.data.split("_")
@@ -120,7 +143,8 @@ async def select_memory(callback: CallbackQuery):
 
     text = f"Ссылки на {model_info['name']} {mem}:\n\n"
     for shop, link in memory_info.items():
-        text += f"{shop}: {link}\n"
+        color = random.choice(model_info["colors"])
+        text += f"{shop} ({color}): {link}\n"
     text += "\n⬅️ Назад для выбора другой модели или памяти."
 
     keyboard = [
