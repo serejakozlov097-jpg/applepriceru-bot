@@ -5,6 +5,10 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
+import os
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+print(repr(BOT_TOKEN))
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 if not BOT_TOKEN:
