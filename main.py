@@ -27,11 +27,56 @@ logging.basicConfig(level=logging.INFO)
 
 # Модели iPhone и их реферальные ссылки
 IPHONE_MODELS = {
+    # iPhone 15 серия
+    "iphone15": {
+        "name": "iPhone 15",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15_128gb", "Ozon": "https://ozon.ru/iphone15_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15_256gb", "Ozon": "https://ozon.ru/iphone15_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15_512gb", "Ozon": "https://ozon.ru/iphone15_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15_1tb", "Ozon": "https://ozon.ru/iphone15_1tb"},
+        },
+        "colors": ["Черный", "Белый", "Синий"]
+    },
+    "iphone15plus": {
+        "name": "iPhone 15 Plus",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15plus_128gb", "Ozon": "https://ozon.ru/iphone15plus_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15plus_256gb", "Ozon": "https://ozon.ru/iphone15plus_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15plus_512gb", "Ozon": "https://ozon.ru/iphone15plus_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15plus_1tb", "Ozon": "https://ozon.ru/iphone15plus_1tb"},
+        },
+        "colors": ["Черный", "Белый", "Красный"]
+    },
+    "iphone15pro": {
+        "name": "iPhone 15 Pro",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15pro_128gb", "Ozon": "https://ozon.ru/iphone15pro_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15pro_256gb", "Ozon": "https://ozon.ru/iphone15pro_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15pro_512gb", "Ozon": "https://ozon.ru/iphone15pro_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15pro_1tb", "Ozon": "https://ozon.ru/iphone15pro_1tb"},
+        },
+        "colors": ["Черный", "Белый", "Золотой"]
+    },
+    "iphone15promax": {
+        "name": "iPhone 15 Pro Max",
+        "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15promax_128gb", "Ozon": "https://ozon.ru/iphone15promax_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15promax_256gb", "Ozon": "https://ozon.ru/iphone15promax_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15promax_512gb", "Ozon": "https://ozon.ru/iphone15promax_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone15promax_1tb", "Ozon": "https://ozon.ru/iphone15promax_1tb"},
+        },
+        "colors": ["Серый", "Белый", "Синий"]
+    },
+
+    # iPhone 16 серия
     "iphone16": {
         "name": "iPhone 16",
         "memory_options": {
             "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_128gb", "Ozon": "https://ozon.ru/iphone16_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_256gb", "Ozon": "https://ozon.ru/iphone16_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_512gb", "Ozon": "https://ozon.ru/iphone16_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16_1tb", "Ozon": "https://ozon.ru/iphone16_1tb"},
         },
         "colors": ["Черный", "Белый", "Синий"]
     },
@@ -40,6 +85,8 @@ IPHONE_MODELS = {
         "memory_options": {
             "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_128gb", "Ozon": "https://ozon.ru/iphone16plus_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_256gb", "Ozon": "https://ozon.ru/iphone16plus_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_512gb", "Ozon": "https://ozon.ru/iphone16plus_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16plus_1tb", "Ozon": "https://ozon.ru/iphone16plus_1tb"},
         },
         "colors": ["Черный", "Белый", "Красный"]
     },
@@ -48,22 +95,30 @@ IPHONE_MODELS = {
         "memory_options": {
             "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_128gb", "Ozon": "https://ozon.ru/iphone16pro_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_256gb", "Ozon": "https://ozon.ru/iphone16pro_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_512gb", "Ozon": "https://ozon.ru/iphone16pro_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16pro_1tb", "Ozon": "https://ozon.ru/iphone16pro_1tb"},
         },
         "colors": ["Черный", "Белый", "Золотой"]
     },
     "iphone16promax": {
         "name": "iPhone 16 Pro Max",
         "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_128gb", "Ozon": "https://ozon.ru/iphone16promax_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_256gb", "Ozon": "https://ozon.ru/iphone16promax_256gb"},
             "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_512gb", "Ozon": "https://ozon.ru/iphone16promax_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone16promax_1tb", "Ozon": "https://ozon.ru/iphone16promax_1tb"},
         },
         "colors": ["Серый", "Белый", "Синий"]
     },
+
+    # iPhone 17 серия
     "iphone17": {
         "name": "iPhone 17",
         "memory_options": {
             "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_128gb", "Ozon": "https://ozon.ru/iphone17_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_256gb", "Ozon": "https://ozon.ru/iphone17_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_512gb", "Ozon": "https://ozon.ru/iphone17_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17_1tb", "Ozon": "https://ozon.ru/iphone17_1tb"},
         },
         "colors": ["Черный", "Белый", "Красный"]
     },
@@ -72,20 +127,26 @@ IPHONE_MODELS = {
         "memory_options": {
             "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_128gb", "Ozon": "https://ozon.ru/iphone17air_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_256gb", "Ozon": "https://ozon.ru/iphone17air_256gb"},
+            "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_512gb", "Ozon": "https://ozon.ru/iphone17air_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17air_1tb", "Ozon": "https://ozon.ru/iphone17air_1tb"},
         },
         "colors": ["Серый", "Белый", "Синий"]
     },
     "iphone17pro": {
         "name": "iPhone 17 Pro",
         "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_128gb", "Ozon": "https://ozon.ru/iphone17pro_128gb"},
             "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_256gb", "Ozon": "https://ozon.ru/iphone17pro_256gb"},
             "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_512gb", "Ozon": "https://ozon.ru/iphone17pro_512gb"},
+            "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17pro_1tb", "Ozon": "https://ozon.ru/iphone17pro_1tb"},
         },
         "colors": ["Черный", "Белый", "Золотой"]
     },
     "iphone17promax": {
         "name": "iPhone 17 Pro Max",
         "memory_options": {
+            "128GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_128gb", "Ozon": "https://ozon.ru/iphone17promax_128gb"},
+            "256GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_256gb", "Ozon": "https://ozon.ru/iphone17promax_256gb"},
             "512GB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_512gb", "Ozon": "https://ozon.ru/iphone17promax_512gb"},
             "1TB": {"ЯндексМаркет": "https://yandex.ru/market/iphone17promax_1tb", "Ozon": "https://ozon.ru/iphone17promax_1tb"},
         },
