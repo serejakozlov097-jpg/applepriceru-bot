@@ -1,3 +1,4 @@
+from aiohttp import web
 import asyncio
 import logging
 import os
@@ -77,10 +78,25 @@ async def show_example(callback: CallbackQuery):
         disable_web_page_preview=True
     )
 
-# Главная функция запуска бота
+# Главная функция запуска бота с мини-сервером для Render
 async def main():
     logging.info("Бот запущен и работает 24/7 на Render!")
-    await dp.start_polling(bot)
+
+    # Порт, который Render требует для Web Service
+    PORT = int(os.environ.get("PORT", 10000))
+
+    # Мини-сервер для Render
+    async def handle(request):
+        return web.Response(text="Bot is running!")
+
+    app = web.Application()
+    app.add_routes([web.get("/", handle)])  # маршрут "/" для проверки сервиса
+
+    # Запускаем бота и веб-сервер параллельно
+    await asyncio.gather(
+        dp.start_polling(bot),        # твой бот
+        web._run_app(app, port=PORT)  # мини-сервер для Render
+    )
 
 # Запуск
 if __name__ == "__main__":
