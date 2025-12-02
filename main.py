@@ -4,18 +4,12 @@ import logging
 import os
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
-from aiogram.types import (
-    Message, CallbackQuery,
-    InlineKeyboardMarkup, InlineKeyboardButton
-)
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
-# ==========================
-# Конфигурация и инициализация
-# ==========================
+# --- Токен бота ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
-    raise ValueError("Ошибка: переменная BOT_TOKEN не установлена!")
-
+    raise ValueError("BOT_TOKEN не установлен! Добавь в Environment Variables на Render.")
 BOT_TOKEN = BOT_TOKEN.strip()
 if "\n" in BOT_TOKEN or "\r" in BOT_TOKEN or " " in BOT_TOKEN:
     raise ValueError(f"BOT_TOKEN содержит недопустимые символы! Проверь токен: {repr(BOT_TOKEN)}")
@@ -27,247 +21,143 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 logging.basicConfig(level=logging.INFO)
 
-# ==========================
-# ДАННЫЕ (моды/цвета/память/магазины)
-# ==========================
-# Модели (код -> отображение)
-SMARTPHONES = {
-    "iphone16": "iPhone 16",
-    "iphone16pro": "iPhone 16 Pro",
-    "iphone15promax": "iPhone 15 Pro Max",
+# --- Данные для меню ---
+CATEGORIES = ["Смартфоны", "Ноутбуки", "Планшеты", "Наушники"]
+
+DEVICES = {
+    "Смартфоны": ["iPhone 16", "iPhone 16 Pro", "iPhone 15 Pro Max"],
+    "Ноутбуки": ["MacBook Air", "MacBook Pro"],
+    "Планшеты": ["iPad Air", "iPad Pro"],
+    "Наушники": ["AirPods Pro", "AirPods Max"]
 }
 
-# Цвета: (код, отображение)
-COLORS = [
-    ("black", "Черный"),
-    ("white", "Белый"),
-    ("blue", "Синий"),
-]
+COLORS = {
+    "iPhone 16": ["Черный", "Белый", "Синий", "Красный"],
+    "iPhone 16 Pro": ["Серебристый", "Графитовый", "Золотой", "Синий"],
+    "iPhone 15 Pro Max": ["Черный", "Белый", "Синий", "Зеленый"],
+    "MacBook Air": ["Серый", "Серебристый", "Золотой"],
+    "MacBook Pro": ["Серый", "Серебристый", "Золотой"],
+    "iPad Air": ["Розовый", "Серый", "Серебристый", "Зеленый"],
+    "iPad Pro": ["Серый", "Серебристый"],
+    "AirPods Pro": ["Белый"],
+    "AirPods Max": ["Серый", "Синий", "Розовый"]
+}
 
-# Память: (код, отображение)
-MEMORY = [
-    ("128", "128 GB"),
-    ("256", "256 GB"),
-    ("512", "512 GB"),
-    ("1tb", "1 TB"),
-]
+MEMORY = {
+    "iPhone 16": ["128GB", "256GB", "512GB"],
+    "iPhone 16 Pro": ["128GB", "256GB", "512GB", "1TB"],
+    "iPhone 15 Pro Max": ["128GB", "256GB", "512GB"],
+    "MacBook Air": ["256GB", "512GB", "1TB"],
+    "MacBook Pro": ["512GB", "1TB", "2TB"],
+    "iPad Air": ["64GB", "256GB"],
+    "iPad Pro": ["128GB", "256GB", "512GB", "1TB"],
+    "AirPods Pro": ["—"],
+    "AirPods Max": ["—"]
+}
 
-# Пример магазинов — можно заменить реальными ссылками/ценами
-STORES = [
-    ("Restore", "https://restore.ru", "89 990 ₽"),
-    ("BigGeek", "https://biggeek.ru", "91 500 ₽"),
-    ("re:Store", "https://re-store.ru", "94 990 ₽"),
-]
+# --- Ссылки на магазины ---
+SHOP_LINKS = {
+    "BigGeek": "https://biggeek.ru/catalog/",
+    "reStore": "https://re-store.ru/catalog/",
+    "Restore": "https://restore.ru/catalog/",
+    "Яндекс Маркет": "https://market.yandex.ru/catalog/",
+    "Ozon": "https://www.ozon.ru/category/",
+    "Ситилинк": "https://www.citilink.ru/catalog/",
+    "МВидео": "https://www.mvideo.ru/products/"
+}
 
-# ==========================
-# КОМПОЗИЦИЯ КНОПОК / МЕНЮ
-# ==========================
-def start_menu():
+# --- Меню клавиатур ---
+def main_menu_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Смартфоны", callback_data="cat_phones")],
-        [InlineKeyboardButton(text="Ноутбуки", callback_data="cat_laptops")],
-        [InlineKeyboardButton(text="Планшеты", callback_data="cat_tablets")],
-        [InlineKeyboardButton(text="Наушники", callback_data="cat_audio")],
+        [InlineKeyboardButton(text=cat, callback_data=f"cat_{cat}") for cat in CATEGORIES]
     ])
 
-def smartphone_menu():
-    kb = []
-    for code, name in SMARTPHONES.items():
-        kb.append([InlineKeyboardButton(text=name, callback_data=f"phone_{code}")])
-    kb.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_start")])
-    return InlineKeyboardMarkup(inline_keyboard=kb)
+def devices_keyboard(category):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=dev, callback_data=f"dev_{dev}") for dev in DEVICES[category]],
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_main")]
+    ])
 
-def color_menu(model_code):
-    kb = [
-        [InlineKeyboardButton(text=display, callback_data=f"color_{model_code}_{code}")]
-        for code, display in COLORS
-    ]
-    kb.append([InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_phones")])
-    return InlineKeyboardMarkup(inline_keyboard=kb)
+def colors_keyboard(device):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=color, callback_data=f"color_{device}_{color}") for color in COLORS[device]],
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data=f"back_devices_{device}")]
+    ])
 
-def memory_menu(model_code, color_code):
-    kb = [
-        [InlineKeyboardButton(text=display, callback_data=f"mem_{model_code}_{color_code}_{mcode}")]
-        for mcode, display in MEMORY
-    ]
-    # назад к выбору цвета
-    kb.append([InlineKeyboardButton(text="⬅️ Назад", callback_data=f"back_colors_{model_code}")])
-    return InlineKeyboardMarkup(inline_keyboard=kb)
+def memory_keyboard(device, color):
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=mem, callback_data=f"mem_{device}_{color}_{mem}") for mem in MEMORY[device]],
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data=f"back_colors_{device}")]
+    ])
 
-# ==========================
-# ХЭНДЛЕРЫ
-# ==========================
+# --- Обработчики ---
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
-    """
-    При /start показываем главное меню (категории).
-    """
-    await message.answer(
-        "Добро пожаловать! 👋\n\nВыберите категорию:",
-        reply_markup=start_menu()
-    )
+    await message.answer("Привет! Выбери категорию устройства ↓", reply_markup=main_menu_keyboard())
 
-# Возврат в стартовое меню
-@dp.callback_query(F.data == "back_to_start")
-async def back_to_start(callback: CallbackQuery):
+@dp.callback_query(F.data.startswith("cat_"))
+async def category_handler(callback: CallbackQuery):
+    category = callback.data[4:]
     await callback.message.edit_text(
-        "Выберите категорию:",
-        reply_markup=start_menu()
+        f"Выберите устройство в категории {category} ↓",
+        reply_markup=devices_keyboard(category)
     )
 
-# Категория: смартфоны
-@dp.callback_query(F.data == "cat_phones")
-async def cat_phones(callback: CallbackQuery):
+@dp.callback_query(F.data.startswith("dev_"))
+async def device_handler(callback: CallbackQuery):
+    device = callback.data[4:]
     await callback.message.edit_text(
-        "Смартфоны — выберите модель:",
-        reply_markup=smartphone_menu()
+        f"Выберите цвет для {device} ↓",
+        reply_markup=colors_keyboard(device)
     )
 
-# Назад от списка смартфонов в главное меню
-@dp.callback_query(F.data == "back_to_phones")
-async def back_to_phones(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "Смартфоны — выберите модель:",
-        reply_markup=smartphone_menu()
-    )
-
-# Выбор модели (нажатие на конкретный телефон)
-@dp.callback_query(F.data.startswith("phone_"))
-async def choose_phone(callback: CallbackQuery):
-    """
-    callback.data = phone_{model_code}
-    """
-    parts = callback.data.split("_", 1)
-    if len(parts) < 2:
-        await callback.answer("Неизвестная модель", show_alert=True)
-        return
-    model_code = parts[1]
-    model_name = SMARTPHONES.get(model_code, "Unknown model")
-    await callback.message.edit_text(
-        f"{model_name}\n\nВыберите цвет:",
-        reply_markup=color_menu(model_code)
-    )
-
-# Назад: от выбора цвета к списку моделей
-@dp.callback_query(F.data.startswith("back_colors_"))
-async def back_to_colors(callback: CallbackQuery):
-    """
-    callback.data = back_colors_{model_code}
-    """
-    parts = callback.data.split("_", 2)
-    # ожидаем parts = ["back","colors","{model_code}"] или ["back","colors","{...}"]
-    # но мы формируем "back_colors_{model_code}" -> split by "_" gives ["back","colors","{model_code}"]
-    if len(parts) >= 3:
-        model_code = parts[2]
-    else:
-        # на случай несовпадения — вернуть в список смартфонов
-        await callback.message.edit_text(
-            "Смартфоны — выберите модель:",
-            reply_markup=smartphone_menu()
-        )
-        return
-
-    await callback.message.edit_text(
-        "Выберите цвет:",
-        reply_markup=color_menu(model_code)
-    )
-
-# Выбор цвета
 @dp.callback_query(F.data.startswith("color_"))
-async def choose_color(callback: CallbackQuery):
-    """
-    callback.data = color_{model_code}_{color_code}
-    """
-    parts = callback.data.split("_", 2)
-    if len(parts) < 3:
-        await callback.answer("Неверные данные", show_alert=True)
-        return
-    _, model_code, color_code = parts
-    model_name = SMARTPHONES.get(model_code, "Unknown model")
-    # получить отображаемое имя цвета
-    color_display = next((disp for code, disp in COLORS if code == color_code), color_code)
+async def color_handler(callback: CallbackQuery):
+    _, device, color = callback.data.split("_", 2)
     await callback.message.edit_text(
-        f"{model_name}\nЦвет: {color_display}\n\nВыберите объём памяти:",
-        reply_markup=memory_menu(model_code, color_code)
+        f"Выберите память для {device} ({color}) ↓",
+        reply_markup=memory_keyboard(device, color)
     )
 
-# Выбор памяти -> показать ссылки на магазины
 @dp.callback_query(F.data.startswith("mem_"))
-async def choose_memory(callback: CallbackQuery):
-    """
-    callback.data = mem_{model_code}_{color_code}_{mem_code}
-    """
-    parts = callback.data.split("_", 3)
-    if len(parts) < 4:
-        await callback.answer("Неверные данные", show_alert=True)
-        return
-    _, model_code, color_code, mem_code = parts
-    model_name = SMARTPHONES.get(model_code, "Unknown model")
-    color_display = next((disp for code, disp in COLORS if code == color_code), color_code)
-    mem_display = next((disp for code, disp in MEMORY if code == mem_code), mem_code)
-
-    # Построим сообщение с найденными магазинами (здесь статические данные — подключи парсер/БД по необходимости)
-    text = (
-        f"📱 {model_name}\n"
-        f"🎨 Цвет: {color_display}\n"
-        f"💾 Память: {mem_display}\n\n"
-        f"🔎 Лучшие предложения по выбранной конфигурации:\n\n"
-    )
-
-    for store_name, store_link, store_price in STORES:
-        text += f"• {store_name} — {store_price}\n{store_link}\n\n"
-
-    # Кнопки: назад к выбору цвета, в главное меню
-    reply_kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⬅️ Назад (к выбору цвета)", callback_data=f"back_colors_{model_code}")],
-        [InlineKeyboardButton(text="🏠 В меню", callback_data="back_to_start")]
+async def memory_handler(callback: CallbackQuery):
+    _, device, color, mem = callback.data.split("_", 3)
+    text = f"Выбран товар: {device}\nЦвет: {color}\nПамять: {mem}\n\nСсылки на магазины с минимальными ценами:\n"
+    for shop, link in SHOP_LINKS.items():
+        device_url = device.lower().replace(" ", "-")
+        color_url = color.lower().replace(" ", "-")
+        mem_url = mem.lower().replace("gb", "gb")
+        text += f"{shop}: {link}{device_url}/{color_url}/{mem_url}\n"
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="⬅️ Назад", callback_data=f"back_colors_{device}")]
     ])
+    await callback.message.edit_text(text, reply_markup=kb)
 
+# --- Кнопки "Назад" ---
+@dp.callback_query(F.data == "back_main")
+async def back_main(callback: CallbackQuery):
+    await callback.message.edit_text("Выберите категорию устройства ↓", reply_markup=main_menu_keyboard())
+
+@dp.callback_query(F.data.startswith("back_devices_"))
+async def back_devices(callback: CallbackQuery):
+    device = callback.data[len("back_devices_"):]
+    category = next(cat for cat, devs in DEVICES.items() if device in devs)
     await callback.message.edit_text(
-        text,
-        reply_markup=reply_kb,
-        disable_web_page_preview=True
+        f"Выберите устройство в категории {category} ↓",
+        reply_markup=devices_keyboard(category)
     )
 
-# Заглушки для других категорий (могут быть расширены аналогично смартфонам)
-@dp.callback_query(F.data == "cat_laptops")
-async def cat_laptops(callback: CallbackQuery):
+@dp.callback_query(F.data.startswith("back_colors_"))
+async def back_colors(callback: CallbackQuery):
+    device = callback.data[len("back_colors_"):]
     await callback.message.edit_text(
-        "Категория: Ноутбуки\n\nСкоро здесь появятся модели.",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_start")]
-        ])
+        f"Выберите цвет для {device} ↓",
+        reply_markup=colors_keyboard(device)
     )
 
-@dp.callback_query(F.data == "cat_tablets")
-async def cat_tablets(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "Категория: Планшеты\n\nСкоро здесь появятся модели.",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_start")]
-        ])
-    )
-
-@dp.callback_query(F.data == "cat_audio")
-async def cat_audio(callback: CallbackQuery):
-    await callback.message.edit_text(
-        "Категория: Наушники\n\nСкоро здесь появятся модели.",
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="⬅️ Назад", callback_data="back_to_start")]
-        ])
-    )
-
-# Обновление цен — заглушка
-@dp.callback_query(F.data == "refresh")
-async def refresh(callback: CallbackQuery):
-    await callback.answer("Цены обновляются каждые 15 минут автоматически", show_alert=True)
-
-# ==========================
-# Запуск бота + мини-сервер для Render
-# ==========================
+# --- Главная функция запуска с мини-сервером для Render ---
 async def main():
     logging.info("Бот запущен и работает 24/7 на Render!")
-
     PORT = int(os.environ.get("PORT", 10000))
 
     async def handle(request):
