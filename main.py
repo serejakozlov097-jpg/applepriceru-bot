@@ -12,11 +12,16 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
     raise ValueError("BOT_TOKEN не установлен! Добавь в Environment Variables на Render.")
 
-# Очищаем токен от лишних пробелов и переносов
+# Убираем пробелы и переносы в начале/конце
 BOT_TOKEN = BOT_TOKEN.strip()
 
-# Для отладки (можно убрать после успешного запуска)
+# Проверка токена на невидимые символы внутри
+if "\n" in BOT_TOKEN or "\r" in BOT_TOKEN or " " in BOT_TOKEN:
+    raise ValueError(f"BOT_TOKEN содержит недопустимые символы! Проверь токен: {repr(BOT_TOKEN)}")
+
+# Для отладки можно вывести токен и его длину
 print("Токен для проверки:", repr(BOT_TOKEN))
+print("Длина токена:", len(BOT_TOKEN))
 
 # Создаём объект бота
 bot = Bot(token=BOT_TOKEN)
